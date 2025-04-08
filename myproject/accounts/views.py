@@ -62,3 +62,7 @@ def complete_profile_redirect(request):
         return redirect('complete_supplier_profile')
     elif user.type == 'restaurant':
         return redirect('complete_restaurant_profile')
+
+
+def home_view(request):
+    return render(request, 'index.html')
