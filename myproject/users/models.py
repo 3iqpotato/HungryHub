@@ -7,4 +7,3 @@ class UserProfile(models.Model):
     img = models.ImageField(upload_to='users/', null=True, blank=True)
     phone_number = models.CharField(max_length=20)
     address = models.TextField()
-    email = models.EmailField()

@@ -21,5 +21,8 @@ import myproject
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('myproject.accounts.urls'))
+    path('', include('myproject.accounts.urls')),
+    path('user/', include('myproject.users.urls')),
+    path('supplier/', include('myproject.suppliers.urls')),
+    path('restaurant/', include('myproject.restaurants.urls')),
 ]

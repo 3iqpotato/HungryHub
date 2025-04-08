@@ -1,0 +1,6 @@
+<h2>Complete Your {{ profile_type }} Profile</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Complete Registration</button>
+</form>
