@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render
+from django.urls import reverse
 
 
 def index_view(request):
@@ -8,7 +10,7 @@ def index_view(request):
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import AccountRegistrationForm
+from .forms import AccountRegistrationForm, LoginForm
 
 
 def register(request):
@@ -35,39 +37,28 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
+class CustomLoginView(LoginView):
+    form_class = LoginForm
+    template_name = 'login.html'
+
+    def get_success_url(self):
+        # Пренасочване според типа потребител след успешен логин
+        user = self.request.user
+        if user.type == 'user' and hasattr(user, 'userprofile'):
+            return reverse('user_home')
+        elif user.type == 'supplier' and hasattr(user, 'supplier'):
+            return reverse('supplier_home_view')
+        elif user.type == 'restaurant' and hasattr(user, 'restaurant'):
+            return reverse('restaurant_home_view')
+        # Ако няма попълнен профил, пренасочи към попълване
+        return reverse('complete_profile_redirect')
 
 
-# @login_required
-# def complete_supplier_profile(request):
-#     if request.method == 'POST':
-#         form = SupplierForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             supplier = form.save(commit=False)
-#             supplier.account = request.user
-#             supplier.save()
-#             return redirect('home')
-#     else:
-#         form = SupplierForm()
-#
-#     return render(request, 'accounts/complete_profile.html', {
-#         'form': form,
-#         'profile_type': 'Supplier'
-#     })
-#
-#
-# @login_required
-# def complete_restaurant_profile(request):
-#     if request.method == 'POST':
-#         form = RestaurantForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             restaurant = form.save(commit=False)
-#             restaurant.account = request.user
-#             restaurant.save()
-#             return redirect('home')
-#     else:
-#         form = RestaurantForm()
-#
-#     return render(request, 'accounts/complete_profile.html', {
-#         'form': form,
-#         'profile_type': 'Restaurant'
-#     })
+def complete_profile_redirect(request):
+    user = request.user
+    if user.type == 'user':
+        return redirect('complete_user_profile')
+    elif user.type == 'supplier':
+        return redirect('complete_supplier_profile')
+    elif user.type == 'restaurant':
+        return redirect('complete_restaurant_profile')

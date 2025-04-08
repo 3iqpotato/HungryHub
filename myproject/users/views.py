@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from myproject.users.forms import UserProfileForm
 from myproject.users.models import UserProfile
@@ -11,6 +12,12 @@ from myproject.users.models import UserProfile
 
 @login_required
 def complete_user_profile(request):
+    if request.user.type != 'user':
+
+        if request.user.type == 'supplier':
+            return redirect('complete_supplier_profile')
+        elif request.user.type == 'restaurant':
+            return redirect('complete_restaurant_profile')
     # Проверяваме дали потребителят вече има профил
     try:
         profile = UserProfile.objects.get(account=request.user)

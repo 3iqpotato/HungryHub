@@ -1,7 +1,17 @@
-
-<h2>Register</h2>
+<body>
+<h2>Register1</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Register</button>
 </form>
+
+
+{% if user.is_authenticated %}
+    <div>odhajidha</div>
+{% else %}
+    <a href="{% url 'login' %}" class="btn btn-outline-primary">Вход</a>
+<!--    <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>-->
+{% endif %}
+
+</body>

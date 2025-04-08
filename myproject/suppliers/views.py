@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from myproject.suppliers.forms import SupplierForm
 from myproject.suppliers.models import Supplier
@@ -8,6 +9,11 @@ from myproject.suppliers.models import Supplier
 # Create your views here.
 @login_required
 def complete_supplier_profile(request):
+    if request.user.type != 'supplier':
+        if request.user.type == 'user':
+            return redirect('complete_user_profile')
+        elif request.user.type == 'restaurant':
+            return redirect('complete_restaurant_profile')
     # Проверяваме дали вече има създаден профил
     try:
         supplier_profile = Supplier.objects.get(account=request.user)

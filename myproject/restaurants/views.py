@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from myproject.restaurants.forms import RestaurantForm
 from myproject.restaurants.models import Restaurant
@@ -8,6 +9,12 @@ from myproject.restaurants.models import Restaurant
 # Create your views here.
 @login_required
 def complete_restaurant_profile(request):
+    if request.user.type != 'restaurant':
+        if request.user.type == 'user':
+            return redirect('complete_user_profile')
+        if request.user.type == 'supplier':
+            return redirect('complete_supplier_profile')
+
     # Проверяваме дали вече съществува профил за ресторанта
     try:
         restaurant_profile = Restaurant.objects.get(account=request.user)
