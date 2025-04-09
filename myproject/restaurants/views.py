@@ -33,7 +33,7 @@ def complete_restaurant_profile(request):
             restaurant.save()
             return redirect('restaurant_home_view')  # Пренасочване след успешно запазване
 
-    return render(request, 'restaurant/complete_profile.html', {
+    return render(request, 'restaurant/complete_restaurant_profile.html', {
         'form': form,
         'profile_type': 'Restaurant',
         'is_update': is_update  # Подаваме флаг дали е редакция

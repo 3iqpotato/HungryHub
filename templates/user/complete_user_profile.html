@@ -1,0 +1,135 @@
+{% load static %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-logo">
+        <img src="{% static 'images/HungryHub.png' %}" alt="HungryHub Logo">
+    </div>
+
+    <h2 style="margin-bottom: 1.5rem; color: #333;">Complete Your Profile</h2>
+
+    <form class="login-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="error-message">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Full Name -->
+        <div class="form-group">
+            <input type="text" 
+                   name="name" 
+                   placeholder="Full Name" 
+                   value="{{ form.name.value|default_if_none:'' }}"
+                   required
+                   class="form-control">
+            {% if form.name.errors %}
+            <div class="error-message">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+            <input type="tel" 
+                   name="phone_number" 
+                   placeholder="Phone Number" 
+                   value="{{ form.phone_number.value|default_if_none:'' }}"
+                   required
+                   class="form-control">
+            {% if form.phone_number.errors %}
+            <div class="error-message">{{ form.phone_number.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+            <textarea name="address" 
+                      placeholder="Address"
+                      class="form-control"
+                      rows="3"
+                      required>{{ form.address.value|default_if_none:'' }}</textarea>
+            {% if form.address.errors %}
+            <div class="error-message">{{ form.address.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="form-group">
+            <label style="display: block; margin-bottom: 8px; color: #666;">Profile Picture:</label>
+            <input type="file" 
+                   name="img" 
+                   class="form-control"
+                   accept="image/*">
+            {% if form.img.errors %}
+            <div class="error-message">{{ form.img.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
+
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form input, 
+    .login-form textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .login-form textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.9em;
+        margin-top: 4px;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background: #ff6b01;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    button[type="submit"]:hover {
+        background: #ff5a00;
+    }
+
+    .login-form input[type="file"] {
+        padding: 8px;
+        background: #f8f9fa;
+        border: 1px dashed #ddd;
+    }
+
+    .login-logo img {
+        max-width: 250px;
+        width: 100%;
+        height: auto;
+    }
+</style>
+{% endblock %}

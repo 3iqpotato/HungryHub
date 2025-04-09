@@ -1,35 +1,137 @@
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Вход в системата</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
+{% load static %}
 
-                        <div class="form-group">
-                            {{ form.username.label_tag }}
-                            {{ form.username }}
-                            {{ form.username.errors }}
-                        </div>
+{% block content %}
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-                        <div class="form-group">
-                            {{ form.password.label_tag }}
-                            {{ form.password }}
-                            {{ form.password.errors }}
-                        </div>
+    .login-logo {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-                        <button type="submit" class="btn btn-primary btn-block">Вход</button>
-                    </form>
+    .login-logo img {
+        width: 250px; /* Fixed width for better control */
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
 
-                    <div class="text-center mt-3">
-                        <a href="{% url 'register' %}">Нямате акаунт? Регистрирайте се</a>
-                    </div>
-                </div>
-            </div>
+    .login-form {
+        width: 100%;
+    }
+
+    .login-form input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .login-form button {
+        width: 100%;
+        padding: 12px;
+        background: #ff6b01;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .login-form button:hover {
+        background: #ff5a00;
+    }
+
+    .additional-links {
+        margin-top: 1rem;
+        text-align: center;
+        width: 100%;
+    }
+
+    .social-login {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .social-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .error-message {
+        color: #dc3545;
+        background: #f8d7da;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Added for better spacing */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-logo">
+        <img src="{% static 'images/HungryHub.png' %}" alt="HungryHub Logo">
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="error-message">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form class="login-form" method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Email or Phone Number" required>
         </div>
+
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <div class="additional-links">
+        <p>Don't have an account?
+            <a href="{% url 'register' %}" style="color: #ff6b01; text-decoration: none;">
+                Sign Up Now
+            </a>
+        </p>
     </div>
 </div>
+{% endblock %}

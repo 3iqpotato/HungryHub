@@ -34,7 +34,7 @@ def complete_user_profile(request):
             profile.save()
             return redirect('user_home')
 
-    return render(request, 'user/complete_profile.html', {
+    return render(request, 'user/complete_user_profile.html', {
         'form': form,
         'profile_type': 'User'
     })

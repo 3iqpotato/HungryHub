@@ -30,7 +30,7 @@ def complete_supplier_profile(request):
             supplier.save()
             return redirect('supplier_home_view')  # Или където искаш да пренасочиш след успешно запазване
 
-    return render(request, 'supplier/complete_profile.html', {
+    return render(request, 'supplier/complete_supplier_profile.html', {
         'form': form,
         'profile_type': 'Supplier'
     })

@@ -6,4 +6,4 @@ from myproject.restaurants.models import Restaurant
 class RestaurantForm(forms.ModelForm):
     class Meta:
         model = Restaurant
-        exclude = ('account',)
+        exclude = ('account', "rating", "discount")

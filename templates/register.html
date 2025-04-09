@@ -1,17 +1,110 @@
-<body>
-<h2>Register1</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+{% load static %}
 
+{% block content %}
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-{% if user.is_authenticated %}
-    <div>odhajidha</div>
-{% else %}
-    <a href="{% url 'login' %}" class="btn btn-outline-primary">Вход</a>
-<!--    <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>-->
-{% endif %}
+    /* Added logo container constraints */
+    .login-logo {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto 2rem auto;
+    }
 
-</body>
+    .login-logo img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .login-form {
+        width: 100%;
+    }
+
+    .login-form input, .login-form select {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .login-form button {
+        width: 100%;
+        padding: 12px;
+        background: #ff6b01;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    /* Keep other existing styles from login */
+    .additional-links, .error-message,
+    .form-group, .social-login, .social-icon {
+        /* Same as login template */
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-logo">
+        <img src="{% static 'images/HungryHub.png' %}" alt="HungryHub Logo">
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="error-message">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form class="login-form" method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="password1" placeholder="Password" required>
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+        </div>
+
+        <div class="form-group">
+            <select name="type" required>
+                <option value="" disabled selected>Select Account Type</option>
+                <option value="user">Regular User</option>
+                <option value="supplier">Supplier</option>
+                <option value="restaurant">Restaurant</option>
+            </select>
+        </div>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <div class="additional-links">
+        <p>Already have an account?
+            <a href="{% url 'login' %}" style="color: #ff6b01; text-decoration: none;">
+                Sign In Now
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}
