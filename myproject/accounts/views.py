@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -66,3 +66,7 @@ def complete_profile_redirect(request):
 
 def home_view(request):
     return render(request, 'index.html')
+
+
+class CustomLogoutView(LogoutView):
+    next_page = 'home_view'  # Страница за пренасочване след изход

@@ -46,8 +46,13 @@
             <a class="navbar-brand" href="#">Hungry Hub</a>
             <div class="ms-auto">
                 {% if user.is_authenticated %}
-                <!-- logaut functionality -->
-<!--                    <a href="{% url 'login' %}" class="btn btn-outline-light">Изход</a>-->
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link">
+                        <i class="fas fa-sign-out-alt"></i> Изход
+                    </button>
+                </form>
+
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Вход</a>
                     <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>

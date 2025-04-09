@@ -133,3 +133,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Добавяне на модели
 AUTH_USER_MODEL = 'accounts.Account'
+LOGOUT_REDIRECT_URL = 'home'  # Ако не използвате next_page в класа
