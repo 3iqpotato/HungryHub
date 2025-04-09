@@ -3,7 +3,7 @@
 ## 📋 Предварителни изисквания
 - Python 3.8+ ([Download Python](https://www.python.org/downloads/))
 - Git ([Download Git](https://git-scm.com/downloads))
-- PyCharm (Community версия е достатъчна) ([Download PyCharm](https://www.jetbrains.com/pycharm/download/))
+- PyCharm Professional ([Download PyCharm](https://www.jetbrains.com/pycharm/download/))
 
 ## 🚀 Инсталация и настройка
 
