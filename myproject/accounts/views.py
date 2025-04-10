@@ -49,7 +49,7 @@ class CustomLoginView(LoginView):
         elif user.type == 'supplier' and hasattr(user, 'supplier'):
             return reverse('supplier_home_view')
         elif user.type == 'restaurant' and hasattr(user, 'restaurant'):
-            return reverse('restaurant_home_view')
+            return reverse('restaurant_home_view', kwargs={'pk': user.restaurant.id})
         # Ако няма попълнен профил, пренасочи към попълване
         return reverse('complete_profile_redirect')
 

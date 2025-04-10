@@ -82,9 +82,19 @@
             <p class="mt-4">Вече имате акаунт? <a href="{% url 'login' %}" class="text-white">Влезте тук</a></p>
             {% else %}
             <div>
-                <a href="{% url 'user_home' %}" class="btn btn-success btn-action">
+                {% if user.restaurant %}
+                <a href="{% url 'restaurant_home_view' pk=user.restaurant.pk %}" class="btn btn-success btn-action">
                     Към моя профил
                 </a>
+                {% elif user.supplier %}
+                                <a href="{% url 'supplier_home_view' %}" class="btn btn-success btn-action">
+                    Към моя профил
+                </a>
+                {% else  %}
+                                <a href="{% url 'user_home' %}" class="btn btn-success btn-action">
+                    Към моя профил
+                </a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
