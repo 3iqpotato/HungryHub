@@ -37,7 +37,7 @@ class ArticleCreateView(CreateView):
 
 class ArticleUpdateView(UpdateView):
     model = Article
-    fields = "__all__"
+    fields = ['name', 'img', 'type', 'ingredients', 'price', 'weight', 'category']
     template_name = 'articles/article_edit.html'
 
     def get_success_url(self):
