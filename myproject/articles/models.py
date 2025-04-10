@@ -7,7 +7,11 @@ class Article(models.Model):
     type = models.CharField(max_length=50)
     ingredients = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    rating = models.FloatField()
-    weight = models.FloatField()
+    rating = models.FloatField(null=True, blank=True)
+    weight = models.FloatField(null=True, blank=True)
     category = models.CharField(max_length=50, null=True, blank=True)
-    menus = models.ManyToManyField(Menu, related_name='articles')
+    menu = models.ForeignKey(  # Променено от ManyToManyField
+        Menu,
+        on_delete=models.CASCADE,
+        related_name='articles'
+    )

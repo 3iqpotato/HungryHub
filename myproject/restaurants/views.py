@@ -5,8 +5,9 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 
+from myproject.articles.models import Article
 from myproject.restaurants.forms import RestaurantForm, RestaurantEditForm
 from myproject.restaurants.models import Restaurant, Menu
 
@@ -116,3 +117,39 @@ class MenuDetailsView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return Menu.objects.get(restaurant=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['articles'] = Article.objects.filter(menu=self.kwargs['pk'])
+        return context
+
+class MenuEditView(LoginRequiredMixin, UpdateView):
+    model = Menu
+    template_name = "restaurant/menu_edit.html"
+    context_object_name = 'menu'
+    pk_url_kwarg = 'pk'
+    fields = ["name"]
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+
+        menu = self.get_object()
+        if request.user != menu.restaurant.account:
+            raise PermissionDenied("Нямате достъп до това меню")
+
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['articles'] = Article.objects.filter(menu=self.kwargs['pk'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        menu = self.get_object()
+        if 'menu_name' in request.POST:  # Проверка за ръчната форма
+            menu.name = request.POST['menu_name']
+            menu.save()
+        return super().post(request, *args, **kwargs)

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit {{ object.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="mb-0">Edit Article: <strong>{{ object.name }}</strong></h2>
+                <p class="text-muted mt-1">Menu: {{ object.menu.name }}</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Скрито поле за menu (ако е нужно) -->
+                {% if form.menu %}
+                    {{ form.menu }}
+                {% endif %}
+
+                <!-- Име -->
+                <div class="form-group">
+                    <label class="form-label">Article Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Снимка -->
+                <div class="form-group">
+                    <label class="form-label">Image</label>
+                    {% if object.img %}
+                        <div>
+                            <img src="{{ object.img.url }}" class="image-preview mb-2">
+                        </div>
+                    {% endif %}
+                    {{ form.img }}
+                    {% if form.img.errors %}
+                        <div class="text-danger">{{ form.img.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Основни полета -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Type</label>
+                            {{ form.type }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Цена и тегло -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Price ($)</label>
+                            {{ form.price }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Weight (g)</label>
+                            {{ form.weight }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Rating</label>
+                            {{ form.rating }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Съставки -->
+                <div class="form-group">
+                    <label class="form-label">Ingredients</label>
+                    {{ form.ingredients }}
+                    {% if form.ingredients.errors %}
+                        <div class="text-danger">{{ form.ingredients.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Бутони -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    <a href="{% url 'restaurant_menu_edit' object.menu.id %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript за визуализация на избрана снимка преди upload
+        document.getElementById('id_img').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const preview = document.querySelector('.image-preview') || document.createElement('img');
+                preview.className = 'image-preview mb-2';
+                preview.src = URL.createObjectURL(e.target.files[0]);
+                e.target.parentNode.insertBefore(preview, e.target.nextSibling);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -60,7 +60,7 @@
     <div class="container">
         <div class="menu-header">
             <h1>{{ menu.name }}</h1>
-            <a href="{}" class="btn-edit">Edit Menu</a>
+            <a href="{% url 'restaurant_menu_edit' menu.id %}" class="btn-edit">Edit Menu</a>
         </div>
 
         <div class="articles-list">
