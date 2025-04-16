@@ -153,3 +153,34 @@ class MenuEditView(LoginRequiredMixin, UpdateView):
             menu.name = request.POST['menu_name']
             menu.save()
         return super().post(request, *args, **kwargs)
+
+
+
+class RestaurantMenuViewForUsers(LoginRequiredMixin, DetailView):
+    model = Restaurant
+    template_name = 'restaurant/restaurant_menu_for_users.html'
+    pk_url_kwarg = 'pk'  # Взима ресторант по ID от URL
+
+    def dispatch(self, request, *args, **kwargs):
+        # Забраняваме достъп на ресторанти/доставчици
+        if request.user.is_authenticated and request.user.type in ['restaurant', 'supplier']:
+            raise PermissionDenied("Ресторанти и доставчици нямат достъп")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        restaurant = self.get_object()
+
+        # Взимаме менюто на ресторанта (1 към 1 връзка)
+        menu = Menu.objects.get(restaurant=restaurant)
+
+        # Взимаме артикулите от менюто (1 към много)
+        articles = Article.objects.filter(menu=menu)
+
+        # Добавяме всичко в контекста
+        context.update({
+            'restaurant': restaurant,
+            'menu': menu,
+            'articles': articles,
+        })
+        return context

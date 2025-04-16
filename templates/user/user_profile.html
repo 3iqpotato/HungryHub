@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .profile-container { max-width: 600px; margin: 2rem auto; padding: 2rem; background: #f9f9f9; border-radius: 8px; }
+        .profile-img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; }
+        .edit-btn { background: #4CAF50; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+        {% include 'navigation.html' %}
+    <div class="profile-container">
+        {% if profile.img %}
+            <img src="{{ profile.img.url }}" class="profile-img" alt="Profile Image">
+        {% else %}
+            <img src="https://via.placeholder.com/150" class="profile-img" alt="No Image">
+        {% endif %}
+
+        <h1>{{ profile.name }}</h1>
+        <p><strong>Phone:</strong> {{ profile.phone_number }}</p>
+        <p><strong>Address:</strong> {{ profile.address }}</p>
+
+        <a href="{% url 'user_profile_edit' pk=profile.pk %}" class="edit-btn">Edit Profile</a>
+    </div>
+</body>
+</html>

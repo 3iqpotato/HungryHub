@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .edit-form { max-width: 600px; margin: 2rem auto; padding: 2rem; background: #f9f9f9; border-radius: 8px; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.5rem; }
+        .save-btn { background: #4CAF50; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+        {% include 'navigation.html' %}
+    <div class="edit-form">
+        <h1>Edit Profile</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_name">Name:</label>
+                <input type="text" id="id_name" name="name" value="{{ form.name.value }}">
+            </div>
+
+            <div class="form-group">
+                <label for="id_img">Profile Image:</label>
+                <input type="file" id="id_img" name="img">
+                {% if form.instance.img %}
+                    <p>Current: <a href="{{ form.instance.img.url }}">{{ form.instance.img.name }}</a></p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_phone_number">Phone:</label>
+                <input type="text" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value }}">
+            </div>
+
+            <div class="form-group">
+                <label for="id_address">Address:</label>
+                <textarea id="id_address" name="address">{{ form.address.value }}</textarea>
+            </div>
+
+            <button type="submit" class="save-btn">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

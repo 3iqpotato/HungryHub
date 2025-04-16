@@ -73,7 +73,7 @@
                     Към моя профил
                 </a>
                 {% else  %}
-                                <a href="{% url 'user_home' %}" class="btn btn-success btn-action">
+                                <a href="{% url 'user_home'  pk=user.userprofile.pk %}" class="btn btn-success btn-action">
                     Към моя профил
                 </a>
                 {% endif %}

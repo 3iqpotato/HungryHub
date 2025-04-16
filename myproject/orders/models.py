@@ -5,8 +5,12 @@ from myproject.restaurants.models import Restaurant
 from myproject.articles.models import Article
 
 class Cart(models.Model):
-    items = models.ManyToManyField(Article)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)  # Нова връзка
+    items = models.ManyToManyField(Article, blank=True)
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)  # Добавен default
+
+    def __str__(self):
+        return f"Cart of {self.user.username}"
 
 class Order(models.Model):
     address_for_delivery = models.TextField()

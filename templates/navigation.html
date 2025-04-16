@@ -17,6 +17,8 @@
             </div>
         </div>
     <div>
+
+                {% if user.is_authenticated %}
                 {% if user.restaurant %}
                 <a href="{% url 'restaurant_home_view' pk=user.restaurant.pk %}" class="btn btn-success btn-action">
                     Към моя профил
@@ -26,9 +28,13 @@
                     Към моя профил
                 </a>
                 {% else  %}
-                                <a href="{% url 'user_home' %}" class="btn btn-success btn-action">
+                                <a href="{% url 'user_profile' pk=user.userprofile.pk %}" class="btn btn-success btn-action">
                     Към моя профил
                 </a>
+        <a href="{% url 'user_home' pk=user.userprofile.pk %}" class="btn btn-success btn-action">Home</a>>
                 {% endif %}
+
+                {% endif %}
+
             </div>
     </nav>

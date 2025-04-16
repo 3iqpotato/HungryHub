@@ -45,7 +45,7 @@ class CustomLoginView(LoginView):
         # Пренасочване според типа потребител след успешен логин
         user = self.request.user
         if user.type == 'user' and hasattr(user, 'userprofile'):
-            return reverse('user_home')
+            return reverse('user_home', kwargs={'pk': user.userprofile.id})
         elif user.type == 'supplier' and hasattr(user, 'supplier'):
             return reverse('supplier_home_view')
         elif user.type == 'restaurant' and hasattr(user, 'restaurant'):
