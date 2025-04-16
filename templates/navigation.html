@@ -31,7 +31,8 @@
                                 <a href="{% url 'user_profile' pk=user.userprofile.pk %}" class="btn btn-success btn-action">
                     Към моя профил
                 </a>
-        <a href="{% url 'user_home' pk=user.userprofile.pk %}" class="btn btn-success btn-action">Home</a>>
+        <a href="{% url 'user_home' pk=user.userprofile.pk %}" class="btn btn-success btn-action">Home</a>
+        <a href="{% url 'user_cart' pk=user.userprofile.pk %}" class="btn btn-success btn-action">Cart</a>
                 {% endif %}
 
                 {% endif %}

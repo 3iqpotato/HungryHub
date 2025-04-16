@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, UpdateView
 
+from myproject.orders.models import Cart
 from myproject.restaurants.models import Restaurant
 from myproject.users.forms import UserProfileForm
 from myproject.users.models import UserProfile
@@ -123,4 +124,21 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # Защита против опити за достъп до чужд профил чрез URL
         if self.kwargs.get('pk') != self.request.user.userprofile.pk:
             raise PermissionDenied("Нямате достъп до този профил")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserCartDetailView(LoginRequiredMixin, DetailView):
+    model = Cart
+    template_name = 'user/user_cart.html'
+    context_object_name = 'cart'
+
+    def get_object(self):
+            # Връща количката на текущия потребител
+        cart, created = Cart.objects.get_or_create(user=self.request.user.userprofile)
+        return cart
+
+    def dispatch(self, request, *args, **kwargs):
+            # Защита против опити за достъп до чужда количка
+        if self.kwargs.get('pk') != request.user.userprofile.pk:
+            raise PermissionDenied("Нямате достъп до тази количка")
         return super().dispatch(request, *args, **kwargs)
