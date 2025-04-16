@@ -41,25 +41,7 @@
 </head>
 <body>
     <!-- Навигация -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Hungry Hub</a>
-            <div class="ms-auto">
-                {% if user.is_authenticated %}
-                <form action="{% url 'logout' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link">
-                        <i class="fas fa-sign-out-alt"></i> Изход
-                    </button>
-                </form>
-
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Вход</a>
-                    <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+        {% include 'navigation.html' %}
 
     <!-- Основно съдържание -->
     <section class="welcome-section">

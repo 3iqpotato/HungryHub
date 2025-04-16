@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home_view'%}">Hungry Hub</a>
+            <div class="ms-auto">
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link">
+                        <i class="fas fa-sign-out-alt"></i> Изход
+                    </button>
+                </form>
+
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Вход</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    <div>
+                {% if user.restaurant %}
+                <a href="{% url 'restaurant_home_view' pk=user.restaurant.pk %}" class="btn btn-success btn-action">
+                    Към моя профил
+                </a>
+                {% elif user.supplier %}
+                                <a href="{% url 'supplier_home_view' %}" class="btn btn-success btn-action">
+                    Към моя профил
+                </a>
+                {% else  %}
+                                <a href="{% url 'user_home' %}" class="btn btn-success btn-action">
+                    Към моя профил
+                </a>
+                {% endif %}
+            </div>
+    </nav>
