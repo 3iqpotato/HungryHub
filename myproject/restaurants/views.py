@@ -46,7 +46,6 @@ def complete_restaurant_profile(request):
     })
 
 
-
 UserModel = get_user_model()
 
 def check_if_user_is_request_user(request, pk):
@@ -54,25 +53,23 @@ def check_if_user_is_request_user(request, pk):
     return request.user == profile
 
 
-class RestaurantHomeView(LoginRequiredMixin, DetailView, UserPassesTestMixin):
+class RestaurantHomeView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Restaurant
     template_name = 'restaurant/restaurant_home.html'
     context_object_name = 'restaurant'
     pk_url_kwarg = 'pk'
 
-    def dispatch(self, request, *args, **kwargs):
-        # Проверка дали потребителят е логнат (LoginRequiredMixin)
-        response = super().dispatch(request, *args, **kwargs)
-
+    def test_func(self):
         restaurant = self.get_object()
-        if request.user != restaurant.account:
-            raise PermissionDenied("Нямате достъп до този ресторант")
+        return self.request.user == restaurant.account
 
-        return response
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return super().handle_no_permission()
+        raise PermissionDenied("Нямате достъп до този ресторант")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавяне на допълнителен контекст ако е необходимо
         context['profile_type'] = 'Restaurant'
         return context
 
@@ -81,22 +78,17 @@ class RestaurantHomeView(LoginRequiredMixin, DetailView, UserPassesTestMixin):
 def edit_restaurant(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
 
-    # Проверка дали потребителят е собственик на ресторанта
     if request.user != restaurant.account:
         return redirect('restaurant_home_view', pk=restaurant.pk)
 
     if request.method == 'POST':
-        form = RestaurantEditForm(request.POST, request.FILES, instance=restaurant)
-        if form.is_valid():
-            form.save()
-            return redirect('restaurant_home_view', pk=restaurant.pk)
-    else:
-        form = RestaurantEditForm(instance=restaurant)
+        restaurant.name = request.POST.get('name')
+        restaurant.save()
+        return redirect('restaurant_home_view', pk=restaurant.pk)
 
-    return render(request, 'restaurant/edit_restaurant.html', {
-        'form': form,
-        'restaurant': restaurant
-    })
+    return render(request, 'restaurant/edit_restaurant.html', {'restaurant': restaurant})
+
+
 
 class MenuDetailsView(LoginRequiredMixin, DetailView):
     model = Menu

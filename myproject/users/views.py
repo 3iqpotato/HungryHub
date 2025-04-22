@@ -14,8 +14,6 @@ from myproject.users.models import UserProfile
 
 # Create your views here.
 
-
-
 @login_required
 def complete_user_profile(request):
     if request.user.type != 'user':
@@ -52,6 +50,7 @@ def complete_user_profile(request):
 #         return render(request,'user/user_home.html', {"user": request.user})
 
 UserModel = get_user_model()
+
 
 def check_if_user_is_request_user(request, pk):
     profile = get_object_or_404(UserModel, pk=pk)

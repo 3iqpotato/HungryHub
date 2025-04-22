@@ -138,3 +138,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # Path to your static folder
 ]
+
+LOGIN_URL = '/login/'
