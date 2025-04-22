@@ -4,9 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import DetailView, UpdateView
 
-from myproject.orders.models import Cart
+from myproject.orders.models import Cart, Order
 from myproject.restaurants.models import Restaurant
 from myproject.users.forms import UserProfileForm
 from myproject.users.models import UserProfile
@@ -43,11 +44,6 @@ def complete_user_profile(request):
         'profile_type': 'User'
     })
 
-
-# @login_required
-# def user_home_view(request):
-#     if request.method == 'GET':
-#         return render(request,'user/user_home.html', {"user": request.user})
 
 UserModel = get_user_model()
 
@@ -141,3 +137,21 @@ class UserCartDetailView(LoginRequiredMixin, DetailView):
         if self.kwargs.get('pk') != request.user.userprofile.pk:
             raise PermissionDenied("Нямате достъп до тази количка")
         return super().dispatch(request, *args, **kwargs)
+
+
+class UserOrdersView(LoginRequiredMixin, View):
+    template_name = 'user/user_orders.html'
+
+    def get(self, request):
+        # Проверка дали потребителят е обикновен клиент (не е ресторант или доставчик)
+        if hasattr(request.user.userprofile, 'restaurant') or hasattr(request.user.userprofile, 'supplier'):
+            raise PermissionDenied("Нямате достъп до тази страница")
+
+        # Взимаме всички поръчки на потребителя, подредени от най-новата
+        orders = Order.objects.filter(user=request.user.userprofile).order_by('-order_date_time')
+
+        context = {
+            'orders': orders,
+            'user': request.user
+        }
+        return render(request, self.template_name, context)

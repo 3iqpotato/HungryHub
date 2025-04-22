@@ -83,6 +83,12 @@
                         <div class="form-text">Enter discount percentage (optional)</div>
                     </div>
 
+                    <div class="mb-4">
+                        <label class="form-label">Delivery fee</label>
+                        {{ form.delivery_fee }}
+                        <div class="form-text">Enter delivery price (optional)</div>
+                    </div>
+
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between">
                         <a href="{% url 'restaurant_home_view' pk=restaurant.pk %}" class="btn btn-outline-secondary">

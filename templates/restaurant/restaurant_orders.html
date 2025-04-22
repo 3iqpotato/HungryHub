@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поръчки - {{ restaurant.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .order-section {
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .section-title {
+            color: #343a40;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .order-card {
+            border-left: 4px solid;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .order-card:hover {
+            transform: translateX(5px);
+        }
+        .pending {
+            border-left-color: #ffc107;
+        }
+        .ready {
+            border-left-color: #0dcaf0;
+        }
+        .delivered {
+            border-left-color: #198754;
+        }
+        .badge-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge-ready {
+            background-color: #0dcaf0;
+            color: #212529;
+        }
+        .badge-delivered {
+            background-color: #198754;
+            color: white;
+        }
+        .order-time {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        .customer-info {
+            font-weight: bold;
+        }
+        .delivery-info {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+        {% include 'navigation.html' %}
+
+    <div class="container">
+        <h1 class="mb-4">Поръчки - {{ restaurant.name }}</h1>
+
+        <!-- Поръчки в обработка -->
+        <div class="order-section">
+            <h2 class="section-title">Поръчки в обработка</h2>
+
+            {% if pending_orders %}
+                {% for order in pending_orders %}
+                <div class="order-card pending p-3 bg-white rounded shadow-sm mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">Поръчка #{{ order.id }}</h5>
+                            <p class="mb-1 customer-info">{{ order.user.user.get_full_name }}</p>
+                            <p class="mb-1">{{ order.address_for_delivery }}</p>
+                            <p class="mb-1 order-time">
+                                Поръчана на: {{ order.order_date_time|date:"d.m.Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-pending">В обработка</span>
+                            <p class="mt-2 mb-0">
+                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <small>{{ order.order_items.count }} артикула</small>
+                        <div>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary me-2">
+                                Детайли
+                            </a>
+                            <form action="{% url 'mark_order_ready' order.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    Маркирай като готова
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-orders">
+                    <p>Няма поръчки в обработка в момента</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Готови за вземане поръчки -->
+        <div class="order-section">
+            <h2 class="section-title">Готови за вземане от доставчик</h2>
+
+            {% if ready_orders %}
+                {% for order in ready_orders %}
+                <div class="order-card ready p-3 bg-white rounded shadow-sm mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">Поръчка #{{ order.id }}</h5>
+                            <p class="mb-1 customer-info">{{ order.user.user.get_full_name }}</p>
+                            <p class="mb-1">{{ order.address_for_delivery }}</p>
+                            <p class="mb-1 order-time">
+                                Готова от: {{ order.status_updated_at|date:"d.m.Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-ready">Готова за вземане</span>
+                            <p class="mt-2 mb-0">
+                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <small>
+                            {% if order.supplier %}
+                                Доставчик: {{ order.supplier.user.get_full_name }}
+                            {% else %}
+                                Очаква доставчик
+                            {% endif %}
+                        </small>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                            Детайли
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-orders">
+                    <p>Няма готови поръчки в момента</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Доставени поръчки -->
+        <div class="order-section">
+            <h2 class="section-title">Доставени поръчки</h2>
+
+            {% if delivered_orders %}
+                {% for order in delivered_orders %}
+                <div class="order-card delived p-3 bg-white rounded shadow-sm mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">Поръчка #{{ order.id }}</h5>
+                            <p class="mb-1 customer-info">{{ order.user.user.get_full_name }}</p>
+                            <p class="mb-1">{{ order.address_for_delivery }}</p>
+                            <p class="mb-1 order-time">
+                                Доставена на: {{ order.status_updated_at|date:"d.m.Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-delivered">Доставена</span>
+                            <p class="mt-2 mb-0">
+                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <small class="delivery-info">
+                            {% if order.supplier %}
+                                Доставена от: {{ order.supplier.user.get_full_name }}<br>
+                                Време за доставка: {{ order.delivery_time|date:"H:i" }}
+                            {% endif %}
+                        </small>
+                        <div>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                Детайли
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-orders">
+                    <p>Няма доставени поръчки</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

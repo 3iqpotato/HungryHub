@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #{{ order.id }} Details</title>
+    <!-- Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .order-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .card-header {
+            background-color: #343a40;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .badge-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge-info {
+            background-color: #0dcaf0;
+            color: #212529;
+        }
+        .badge-success {
+            background-color: #198754;
+            color: white;
+        }
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-history {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        table {
+            margin-top: 20px;
+        }
+        tfoot tr:last-child {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+        {% include 'navigation.html' %}
+    <div class="container order-detail-container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Order #{{ order.id }}</h2>
+                <span class="badge badge-{{ order.get_status_badge }}">{{ order.get_status_display }}</span>
+            </div>
+
+            <div class="card-body">
+                <!-- Основна информация за поръчката -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>Order Information</h4>
+                        <p><strong>Order Date:</strong> {{ order.order_date_time|date:"d M Y H:i" }}</p>
+                        <p><strong>Delivery Time:</strong> {{ order.delivery_time|date:"d M Y H:i" }}</p>
+                        <p><strong>Delivery Address:</strong> {{ order.address_for_delivery }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Restaurant Information</h4>
+                        {% if order.restaurant %}
+                            <p><strong>Name:</strong> {{ order.restaurant.name }}</p>
+                            <p><strong>Address:</strong> {{ order.restaurant.address }}</p>
+                            <p><strong>Phone:</strong> {{ order.restaurant.phone_number }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Продукти в поръчката -->
+                <h4>Order Items</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.order_items.all  %}
+                        {{order}}
+                        {{item}}
+                        <tr>
+                            <td>{{ item.article.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.article.price }} лв.</td>
+                            <td>{{ item.get_total_price }} лв.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Delivery Fee:</strong></td>
+                            <td>{{ order.restaurant.delivery_fee|default:"0.00" }} лв.</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td>{{ order.get_total_price }} лв.</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Действия според потребителя -->
+                <div class="action-buttons mt-4">
+                    {% if user.is_authenticated %}
+                        <!-- Ресторант - може да маркира като готова -->
+                        {% if user.userprofile == order.restaurant.owner or user.userprofile in order.restaurant.staff.all %}
+                            {% if order.status == 'pending' %}
+                                <form method="post" action="{% url 'mark_order_ready' order.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Mark as Ready for Pickup</button>
+                                </form>
+                            {% elif order.status == 'ready_for_pickup' %}
+                                <span class="text-muted">Waiting for delivery pickup</span>
+                            {% endif %}
+
+                        <!-- Доставчик - може да вземе поръчка или маркира като доставена -->
+                        {% elif user.userprofile.is_supplier %}
+                            {% if order.status == 'ready_for_pickup' and not order.supplier %}
+                                <form method="post" action="{% url 'accept_for_delivery' order.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Accept for Delivery</button>
+                                </form>
+                            {% elif order.status == 'picked_up' and order.supplier == user.userprofile %}
+                                <form method="post" action="{% url 'mark_order_delivered' order.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-info">Mark as Delivered</button>
+                                </form>
+                            {% endif %}
+
+                        <!-- Клиент - само преглед -->
+                        {% elif user.userprofile == order.user %}
+                            {% if order.status == 'pending' %}
+                                <span class="text-info">Your order is being prepared</span>
+                            {% elif order.status == 'ready_for_pickup' %}
+                                <span class="text-warning">Your order is ready for pickup</span>
+                            {% elif order.status == 'picked_up' %}
+                                <span class="text-primary">Your order is on the way</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- История на статусите -->
+                <div class="status-history mt-4">
+                    <h4>Order Status History</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Created on {{ order.order_date_time|date:"d M Y H:i" }}</li>
+                        {% if order.status_updated_at %}
+                            <li class="list-group-item">Status changed to {{ order.get_status_display }} on {{ order.status_updated_at|date:"d M Y H:i" }}</li>
+                        {% endif %}
+                        {% if order.supplier %}
+                            <li class="list-group-item">Delivery assigned to {{ order.supplier.user.get_full_name }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

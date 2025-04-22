@@ -9,6 +9,15 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=20)
     address = models.TextField()
     rating = models.FloatField(default=0, validators=[MaxValueValidator(5.0), MinValueValidator(0.0)])
+    delivery_fee = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        default=0.00, blank=True,
+        validators=[
+            MinValueValidator(0.00),
+            MaxValueValidator(10.00)
+        ]
+    )
     discount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
 class Menu(models.Model):

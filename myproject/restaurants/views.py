@@ -5,9 +5,11 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views import View
 from django.views.generic import DetailView, UpdateView
 
 from myproject.articles.models import Article
+from myproject.orders.models import Order
 from myproject.restaurants.forms import RestaurantForm, RestaurantEditForm
 from myproject.restaurants.models import Restaurant, Menu
 
@@ -23,6 +25,7 @@ def complete_restaurant_profile(request):
 
     # Проверяваме дали вече съществува профил за ресторанта
     try:
+
         restaurant_profile = Restaurant.objects.get(account=request.user)
         # Ако има, използваме съществуващия за редакция
         form = RestaurantForm(request.POST or None, request.FILES or None, instance=restaurant_profile)
@@ -33,6 +36,7 @@ def complete_restaurant_profile(request):
         is_update = False
 
     if request.method == 'POST':
+        print(form.errors)
         if form.is_valid():
             restaurant = form.save(commit=False)
             restaurant.account = request.user
@@ -78,15 +82,22 @@ class RestaurantHomeView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 def edit_restaurant(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
 
+    # Проверка дали потребителят е собственик на ресторанта
     if request.user != restaurant.account:
         return redirect('restaurant_home_view', pk=restaurant.pk)
 
     if request.method == 'POST':
-        restaurant.name = request.POST.get('name')
-        restaurant.save()
-        return redirect('restaurant_home_view', pk=restaurant.pk)
+        form = RestaurantEditForm(request.POST, request.FILES, instance=restaurant)
+        if form.is_valid():
+            form.save()
+            return redirect('restaurant_home_view', pk=restaurant.pk)
+    else:
+        form = RestaurantEditForm(instance=restaurant)
 
-    return render(request, 'restaurant/edit_restaurant.html', {'restaurant': restaurant})
+    return render(request, 'restaurant/edit_restaurant.html', {
+        'form': form,
+        'restaurant': restaurant
+    })
 
 
 
@@ -176,3 +187,38 @@ class RestaurantMenuViewForUsers(LoginRequiredMixin, DetailView):
             'articles': articles,
         })
         return context
+
+
+class RestaurantOrdersView(LoginRequiredMixin, View):
+    template_name = 'restaurant/restaurant_orders.html'
+
+    def get(self, request):
+        # Проверка дали потребителят е ресторант
+        if not hasattr(request.user, 'restaurant'):
+            raise PermissionDenied("Нямате достъп до тази страница")
+
+        restaurant = request.user.restaurant
+
+        # Взимаме поръчките разделени по статус
+        pending_orders = Order.objects.filter(
+            restaurant=restaurant,
+            status='pending'
+        ).order_by('order_date_time')
+
+        ready_orders = Order.objects.filter(
+            restaurant=restaurant,
+            status='ready_for_pickup'
+        ).order_by('order_date_time')
+
+        delivered_orders = Order.objects.filter(
+            restaurant=restaurant,
+            status='picked_up'
+        ).order_by('order_date_time')
+
+        context = {
+            'pending_orders': pending_orders,
+            'ready_orders': ready_orders,
+            'restaurant': restaurant,
+            'delivered_orders':delivered_orders
+        }
+        return render(request, self.template_name, context)
