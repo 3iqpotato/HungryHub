@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставени поръчки</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .order-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-left: 5px solid #198754;
+        }
+        .badge-delivered {
+            background-color: #198754;
+            color: white;
+        }
+        .order-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .delivery-time {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Доставени поръчки</h1>
+            <a href="{% url 'supplier_active_orders' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Обратно към активни
+            </a>
+        </div>
+
+        {% if delivered_orders %}
+            <div class="row">
+                {% for order in delivered_orders %}
+                <div class="col-md-6">
+                    <div class="order-card p-4 bg-white">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h4>Поръчка #{{ order.id }}</h4>
+                                <span class="badge badge-delivered">Доставена</span>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 order-time">
+                                    Доставена: {{ order.status_updated_at|date:"d.m.Y H:i" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <p><i class="bi bi-shop"></i> {{ order.restaurant.name }}</p>
+                            <p><i class="bi bi-person"></i> {{ order.user.name }}</p>
+                            <p><i class="bi bi-geo-alt"></i> {{ order.address_for_delivery }}</p>
+                            <p class="delivery-time">
+                                <i class="bi bi-clock-history"></i> Време за доставка:
+                                {{ order.delivery_time|date:"H:i" }}
+                            </p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                                <span class="text-muted">• {{ order.order_items.count }} артикула</span>
+                            </div>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-eye"></i> Детайли
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Все още нямате доставени поръчки.
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

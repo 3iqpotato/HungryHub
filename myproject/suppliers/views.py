@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.views import View
@@ -113,3 +114,83 @@ class EditSupplierProfileView(LoginRequiredMixin, View):
             form.save()
             return redirect('supplier_home_view')
         return render(request, self.template_name, {'form': form})
+
+
+
+@login_required
+def accept_order(request, order_id):
+    # Проверка дали потребителят е доставчик
+    if not hasattr(request.user, 'supplier'):
+        return HttpResponseForbidden("Нямате права за това действие")
+
+    # Взимане на поръчката
+    order = get_object_or_404(Order, id=order_id)
+
+    # Проверка дали поръчката е готова за вземане
+    if order.status != 'ready_for_pickup':
+        return HttpResponseForbidden("Поръчката не е налична за вземане")
+
+    # Свързване на поръчката с доставчика
+    order.status = 'on_delivery'
+    order.supplier = request.user.supplier
+    order.save()
+
+    return redirect('supplier_active_orders')
+
+
+@login_required
+def supplier_active_orders(request):
+    # Проверка дали потребителят е доставчик
+    if not hasattr(request.user, 'supplier'):
+        return HttpResponseForbidden("Нямате достъп до тази страница")
+
+    # Взимаме активните поръчки на доставчика
+    active_orders = Order.objects.filter(
+        supplier=request.user.supplier,
+        status='on_delivery'
+    ).order_by('order_date_time')
+
+    return render(request, 'supplier/active_orders.html', {
+        'active_orders': active_orders
+    })
+
+
+@login_required
+def mark_as_delivered(request, order_id):
+    # Проверка дали потребителят е доставчик
+    if not hasattr(request.user, 'supplier'):
+        return HttpResponseForbidden("Нямате права за това действие")
+
+    # Взимане на поръчката
+    order = get_object_or_404(Order, id=order_id)
+
+    # Проверка дали поръчката е на доставчика
+    if order.supplier != request.user.supplier:
+        return HttpResponseForbidden("Тази поръчка не е ваша")
+
+    # Проверка на статуса
+    if order.status != 'on_delivery':
+        return HttpResponseForbidden("Невалидна операция")
+
+    # Промяна на статуса
+    order.status = 'delivered'
+    order.save()
+
+    return redirect('supplier_active_orders')
+
+
+@login_required
+def supplier_delivered_orders(request):
+    # Проверка дали потребителят е доставчик
+    if not hasattr(request.user, 'supplier'):
+        return HttpResponseForbidden("Нямате достъп до тази страница")
+
+    # Взимаме доставените поръчки на доставчика
+    delivered_orders = Order.objects.filter(
+        supplier=request.user.supplier,
+        status='delivered'
+    ).order_by('delivery_time')  # Най-новите първо
+
+    return render(request, 'supplier/delivered_orders.html', {
+        'delivered_orders': delivered_orders
+    })

@@ -162,7 +162,7 @@
                                 <span class="text-info">Your order is being prepared</span>
                             {% elif order.status == 'ready_for_pickup' %}
                                 <span class="text-warning">Your order is ready for pickup</span>
-                            {% elif order.status == 'picked_up' %}
+                            {% elif order.status == 'on_delivery' %}
                                 <span class="text-primary">Your order is on the way</span>
                             {% endif %}
                         {% endif %}
@@ -178,7 +178,7 @@
                             <li class="list-group-item">Status changed to {{ order.get_status_display }} on {{ order.status_updated_at|date:"d M Y H:i" }}</li>
                         {% endif %}
                         {% if order.supplier %}
-                            <li class="list-group-item">Delivery assigned to {{ order.supplier.user.get_full_name }}</li>
+                            <li class="list-group-item">Delivery assigned to {{ order.supplier.name }}</li>
                         {% endif %}
                     </ul>
                 </div>
