@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактиране на профил - Доставчик</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding-top: 40px;
+        }
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #0d6efd;
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        .btn-save {
+            width: 100%;
+            padding: 10px;
+            font-weight: 600;
+        }
+        .img-preview-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+        {% include 'navigation.html' %}
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>Редактиране на профил</h2>
+                <p class="text-muted">Актуализирайте вашите данни</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="img-preview-container">
+                    {% if form.instance.img %}
+                        <img src="{{ form.instance.img.url }}" class="profile-img" id="img-preview">
+                    {% else %}
+                        <img src="https://via.placeholder.com/120" class="profile-img" id="img-preview">
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_img" class="form-label">Профилна снимка</label>
+                    <input type="file" name="img" accept="image/*" class="form-control" id="id_img">
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_name" class="form-label">Име</label>
+                    <input type="text" name="name" value="{{ form.name.value|default_if_none:'' }}" class="form-control" id="id_name">
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_phone_number" class="form-label">Телефонен номер</label>
+                    <input type="text" name="phone_number" value="{{ form.phone_number.value|default_if_none:'' }}" class="form-control" id="id_phone_number">
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_type" class="form-label">Тип транспорт</label>
+                    <select name="type" class="form-select" id="id_type">
+                        <option value="">Изберете...</option>
+                        <option value="car" {% if form.type.value == 'car' %}selected{% endif %}>Кола</option>
+                        <option value="motorcycle" {% if form.type.value == 'motorcycle' %}selected{% endif %}>Мотор</option>
+                        <option value="bicycle" {% if form.type.value == 'bicycle' %}selected{% endif %}>Велосипед</option>
+                        <option value="other" {% if form.type.value == 'other' %}selected{% endif %}>Друг</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-save mt-4">Запази промените</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Превю на избраната снимка
+        document.getElementById('id_img').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('img-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

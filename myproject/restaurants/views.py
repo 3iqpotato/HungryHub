@@ -212,7 +212,7 @@ class RestaurantOrdersView(LoginRequiredMixin, View):
 
         delivered_orders = Order.objects.filter(
             restaurant=restaurant,
-            status='picked_up'
+            status__in=['delivered', 'on_delivery']
         ).order_by('order_date_time')
 
         context = {

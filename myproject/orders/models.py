@@ -35,7 +35,8 @@ class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('ready_for_pickup', 'Ready for Pickup'),
-        ('picked_up', 'Picked Up'),
+        ('on_delivery', 'On Delivery'),
+        ('delivered', 'Delivered'),
     ]
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     address_for_delivery = models.TextField()

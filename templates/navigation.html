@@ -23,9 +23,8 @@
         <a href="{% url 'restaurant_home_view' pk=user.restaurant.pk %}" class="btn btn-success btn-action">Към моя профил</a>
                 <a href="{% url 'restaurant_orders' %}" class="btn btn-success btn-action">поръчки</a>
                 {% elif user.supplier %}
-        <a href="{% url 'supplier_home_view' %}" class="btn btn-success btn-action">
-                    Към моя профил
-                </a>
+        <a href="{% url 'available_orders' %}" class="btn btn-success btn-action">Home</a>
+        <a href="{% url 'supplier_home_view' %}" class="btn btn-success btn-action">Към моя профил</a>
                 {% else  %}
                                 <a href="{% url 'user_profile' pk=user.userprofile.pk %}" class="btn btn-success btn-action">
                     Към моя профил
