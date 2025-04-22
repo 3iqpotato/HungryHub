@@ -179,10 +179,11 @@
                     </td>
                     <td>{{ item.price|floatformat:2 }} лв.</td>
                     <td>
-                        <form action="{% url 'remove-from-cart' item.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="remove-btn">Премахни</button>
-                        </form>
+                        <button class="remove-btn"
+                                data-article-id="{{ item.id }}"
+                                data-csrf="{{ csrf_token }}">
+                            Премахни
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -206,4 +207,35 @@
         {% endif %}
     </div>
 </body>
+
+<script>
+document.querySelectorAll('.remove-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const articleId = this.dataset.articleId;
+        const csrfToken = this.dataset.csrf;
+
+        fetch(`/orders/remove-from-cart/${articleId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Презареждаме страницата за да видим промените
+                location.reload();
+            } else {
+                alert('Възникна грешка при премахването на артикула');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Възникна грешка при комуникацията със сървъра');
+        });
+    });
+});
+</script>
 </html>

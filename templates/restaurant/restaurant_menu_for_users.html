@@ -50,10 +50,43 @@
                     <h3>{{ item.name }}</h3>
                     <p>{{ item.description }}</p>
                     <p><strong>${{ item.price }}</strong></p>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" data-article-id="{{ item.id }}">Add to Cart</button>
                 </div>
             {% endfor %}
         </div>
     </div>
 </body>
+<script>
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const articleId = this.dataset.articleId;
+
+        fetch(`/orders/add-to-cart/${articleId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Показване на toast/message за успешно добавяне
+                alert('Артикулът е добавен в количката!');
+                // Можете да обновите брояча на количката в навигацията
+                const cartCounter = document.querySelector('.cart-counter');
+                if (cartCounter) {
+                    cartCounter.textContent = data.items_count;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Възникна грешка при добавяне на артикула.');
+        });
+    });
+});
+</script>
 </html>

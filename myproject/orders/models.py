@@ -1,3 +1,5 @@
+from numbers import Number
+
 from django.db import models
 from myproject.users.models import UserProfile
 from myproject.suppliers.models import Supplier
@@ -8,6 +10,7 @@ class Cart(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)  # Нова връзка
     items = models.ManyToManyField(Article, blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)  # Добавен default
+    total_price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00, blank=True, null=True)  # Добавен default
 
     def __str__(self):
         return f"Cart of {self.user.username}"
