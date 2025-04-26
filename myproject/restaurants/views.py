@@ -36,7 +36,6 @@ def complete_restaurant_profile(request):
         is_update = False
 
     if request.method == 'POST':
-        print(form.errors)
         if form.is_valid():
             restaurant = form.save(commit=False)
             restaurant.account = request.user
