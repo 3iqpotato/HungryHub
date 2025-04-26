@@ -100,7 +100,6 @@ def edit_restaurant(request, pk):
     })
 
 
-
 class MenuDetailsView(LoginRequiredMixin, DetailView):
     model = Menu
     template_name = "restaurant/menu_details.html"
@@ -110,8 +109,6 @@ class MenuDetailsView(LoginRequiredMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         # Проверка дали потребителят е логнат (LoginRequiredMixin)
         response = super().dispatch(request, *args, **kwargs)
-
-
         menu = self.get_object()
         if request.user != menu.restaurant.account:
             raise PermissionDenied("Нямате достъп до това меню")
@@ -127,6 +124,7 @@ class MenuDetailsView(LoginRequiredMixin, DetailView):
         context['articles'] = Article.objects.filter(menu=self.kwargs['pk'])
         return context
 
+
 class MenuEditView(LoginRequiredMixin, UpdateView):
     model = Menu
     template_name = "restaurant/menu_edit.html"
@@ -136,8 +134,6 @@ class MenuEditView(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
-
-
         menu = self.get_object()
         if request.user != menu.restaurant.account:
             raise PermissionDenied("Нямате достъп до това меню")
@@ -156,7 +152,6 @@ class MenuEditView(LoginRequiredMixin, UpdateView):
             menu.name = request.POST['menu_name']
             menu.save()
         return super().post(request, *args, **kwargs)
-
 
 
 class RestaurantMenuViewForUsers(LoginRequiredMixin, DetailView):
