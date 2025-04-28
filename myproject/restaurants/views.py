@@ -168,17 +168,22 @@ class RestaurantMenuViewForUsers(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         restaurant = self.get_object()
 
-        # Взимаме менюто на ресторанта (1 към 1 връзка)
+        # Get the menu
         menu = Menu.objects.get(restaurant=restaurant)
 
-        # Взимаме артикулите от менюто (1 към много)
-        articles = Article.objects.filter(menu=menu)
+        # Filtering by type if needed
+        food_type = self.request.GET.get('type')
+        if food_type:
+            articles = Article.objects.filter(menu=menu, type=food_type)
+        else:
+            articles = Article.objects.filter(menu=menu)
 
-        # Добавяме всичко в контекста
+        # Pass the selected type to the context (for highlighting the button later)
         context.update({
             'restaurant': restaurant,
             'menu': menu,
             'articles': articles,
+            'selected_type': food_type,
         })
         return context
 

@@ -37,7 +37,13 @@
     <div class="menu-section">
         <h2>{{ menu.name }}</h2>
         <p>{{ menu.description }}</p>
-
+        <div class="mb-4 text-center">
+            <a href="?type=" class="btn btn-outline-primary m-1 {% if not selected_type %}active{% endif %}">All</a>
+            <a href="?type=salads" class="btn btn-outline-primary m-1 {% if selected_type == 'salads' %}active{% endif %}">Salads</a>
+            <a href="?type=appetizers" class="btn btn-outline-primary m-1 {% if selected_type == 'appetizers' %}active{% endif %}">Appetizers</a>
+            <a href="?type=main_course" class="btn btn-outline-primary m-1 {% if selected_type == 'main_course' %}active{% endif %}">Main Course</a>
+            <a href="?type=desserts" class="btn btn-outline-primary m-1 {% if selected_type == 'desserts' %}active{% endif %}">Desserts</a>
+        </div>
         <!-- Артикули -->
         <div class="menu-items">
             {% for item in articles %}
