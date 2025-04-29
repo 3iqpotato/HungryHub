@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 
@@ -12,7 +14,8 @@ from myproject.articles.models import Article
 from myproject.orders.models import Order
 from myproject.restaurants.forms import RestaurantForm, RestaurantEditForm
 from myproject.restaurants.models import Restaurant, Menu
-
+from django.db.models import Sum
+from datetime import date
 
 # Create your views here.
 @login_required
@@ -74,6 +77,25 @@ class RestaurantHomeView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['profile_type'] = 'Restaurant'
+
+        # Изчисляване на дневния оборот
+        today = date.today()
+        # Преглеждаме всички поръчки за текущия ден
+        orders = Order.objects.filter(restaurant=self.get_object(), order_date_time__date=today)
+
+        # Изчисляваме оборота за деня чрез метода get_total_price() на всяка поръчка
+        daily_turnover = sum(order.get_total_price() for order in orders)
+
+        # Изчисляване на месечния оборот
+        start_of_month = today.replace(day=1)
+        monthly_orders = Order.objects.filter(restaurant=self.get_object(), order_date_time__gte=start_of_month)
+
+        # Изчисляваме оборота за месеца
+        monthly_turnover = sum(order.get_total_price() for order in monthly_orders)
+
+        # Добавяме оборотите в контекста
+        context['daily_turnover'] = daily_turnover
+        context['monthly_turnover'] = monthly_turnover
         return context
 
 
@@ -221,3 +243,25 @@ class RestaurantOrdersView(LoginRequiredMixin, View):
             'delivered_orders':delivered_orders
         }
         return render(request, self.template_name, context)
+
+
+def restaurant_dashboard(request, pk):
+    restaurant = Restaurant.objects.get(pk=pk)
+
+    # Изчисляваме дневния оборот
+    today = timezone.now().date()
+    daily_orders = Order.objects.filter(restaurant=restaurant, order_date_time__date=today)
+    daily_turnover = daily_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    # Изчисляваме месечния оборот
+    start_of_month = today.replace(day=1)
+    monthly_orders = Order.objects.filter(restaurant=restaurant, order_date_time__gte=start_of_month)
+    monthly_turnover = monthly_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    context = {
+        'restaurant': restaurant,
+        'daily_turnover': daily_turnover,
+        'monthly_turnover': monthly_turnover,
+    }
+
+    return render(request, 'restaurants/restaurant_dashboard.html', context)
