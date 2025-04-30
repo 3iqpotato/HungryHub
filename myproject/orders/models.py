@@ -1,8 +1,6 @@
 from numbers import Number
 
 from django.db import models
-
-
 from myproject.users.models import UserProfile
 from myproject.suppliers.models import Supplier
 from myproject.restaurants.models import Restaurant
@@ -65,4 +63,6 @@ class OrderItem(models.Model):
 
     def get_total_price(self):
         return self.article.price * self.quantity
+
+
 

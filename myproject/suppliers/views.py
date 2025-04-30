@@ -12,6 +12,7 @@ from myproject.suppliers.forms import SupplierForm, SupplierProfileForm
 from myproject.suppliers.models import Supplier
 
 
+
 # Create your views here.
 @login_required
 def complete_supplier_profile(request):
@@ -53,21 +54,34 @@ class SupplierHomeView(LoginRequiredMixin, View):
 
     def get(self, request):
         supplier = request.user.supplier
-        active_orders = Order.objects.filter(
-            supplier=supplier,
-            status='on_delivery'
-        ).count()
 
-        delivered_orders = Order.objects.filter(
+        # Заплащане
+        delivered_today = Order.objects.filter(
             supplier=supplier,
-            status='delivered'
-        ).count()
+            status='delivered',
+            delivery_time__date=timezone.now().date()
+        )
+        delivered_today_count = delivered_today.count()
+        bonus = supplier.calculate_bonus()
+        daily_earnings = delivered_today_count * 3 + bonus
+
+        # Обороти
+        daily_turnover = supplier.get_daily_turnover()
+        monthly_turnover = supplier.get_monthly_turnover()
+
+        active_orders = Order.objects.filter(supplier=supplier, status='on_delivery').count()
+        delivered_orders = Order.objects.filter(supplier=supplier, status='delivered').count()
 
         context = {
             'supplier': supplier,
             'active_orders': active_orders,
             'delivered_orders': delivered_orders,
-            'user': request.user
+            'user': request.user,
+            'daily_earnings': daily_earnings,
+            'daily_turnover': daily_turnover,
+            'monthly_turnover': monthly_turnover,
+            'bonus': bonus,
+            'delivered_today': delivered_today,  # Подаваме само доставените поръчки за днес
         }
         return render(request, self.template_name, context)
 
