@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app  # Мапва текущата директория към /app в контейнера
+      - ./db:/app/db  # Ако SQLite файла е в ./db директория
+    environment:
+      - PYTHONUNBUFFERED=1
