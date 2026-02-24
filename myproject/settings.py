@@ -30,7 +30,7 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.0.2.2', 'localhost']
 
 MyApps = [
     # Default Django apps...

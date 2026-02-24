@@ -2,16 +2,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
 from django.urls import reverse
-
-
-def index_view(request):
-    return render(request, 'index.html')
-
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .forms import AccountRegistrationForm, LoginForm
 
+
+def index_view(request):
+    return render(request, 'index.html')
 
 def register(request):
     if request.method == 'POST':

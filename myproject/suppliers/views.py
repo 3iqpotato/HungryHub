@@ -24,6 +24,7 @@ def complete_supplier_profile(request):
     # Проверяваме дали вече има създаден профил
     try:
         supplier_profile = Supplier.objects.get(account=request.user)
+
         # Ако има, използваме съществуващия за редакция
         form = SupplierForm(request.POST or None, request.FILES or None, instance=supplier_profile)
     except Supplier.DoesNotExist:
@@ -31,6 +32,7 @@ def complete_supplier_profile(request):
         form = SupplierForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
+        print("jda")
         if form.is_valid():
             supplier = form.save(commit=False)
             supplier.account = request.user
