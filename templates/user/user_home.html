@@ -67,24 +67,31 @@
 
     <!-- Списък с ресторанти -->
     <div class="restaurants-container">
-        {% for restaurant in restaurants %}
-            <div class="restaurant-card">
-                <!-- Снимка (ако няма, показва placeholder) -->
-                {% if restaurant.image %}
-                    <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="restaurant-image">
-                {% else %}
-                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No image" class="restaurant-image">
-                {% endif %}
+    {% for restaurant in restaurants %}
+        <div class="restaurant-card">
+            {% if restaurant.image %}
+                <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="restaurant-image">
+            {% else %}
+                <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No image" class="restaurant-image">
+            {% endif %}
 
-<!--                 Име и бутон -->
-                <div class="restaurant-info">
-                    <h3 class="restaurant-name">{{ restaurant.name }}</h3>
-                    <a href="{% url 'restaurant_menu_for_users' restaurant.pk %}" class="menu-button">
-                        View Menu
-                    </a>
-                </div>
+            <div class="restaurant-info">
+                <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                <a href="{% url 'restaurant_menu_for_users' restaurant.pk %}" class="menu-button">
+                    View Menu
+                </a>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+
+    {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+            <h2 style="color:#555;">🍽️ Още няма ресторанти</h2>
+            <p style="color:#777; font-size: 18px;">
+                В момента няма налични ресторанти.  
+                Проверете отново по-късно!
+            </p>
+        </div>
+    {% endfor %}
+</div>
 </body>
 </html>

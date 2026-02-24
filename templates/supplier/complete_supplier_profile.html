@@ -45,14 +45,10 @@
 
         <!-- Service Type -->
         <div class="form-group">
-            <input type="text"
-                   name="type"
-                   placeholder="Your Type"
-                   value="{{ form.type.value|default_if_none:'' }}"
-                   required
-                   class="form-control">
+            <label for="id_type" class="form-label">Transport type</label>
+            {{ form.type }}
             {% if form.type.errors %}
-            <div class="error-message">{{ form.type.errors }}</div>
+                <div class="error-message">{{ form.type.errors }}</div>
             {% endif %}
         </div>
 
