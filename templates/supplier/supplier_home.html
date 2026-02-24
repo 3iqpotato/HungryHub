@@ -78,10 +78,19 @@
     <div class="profile-header">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-2 text-center">
-                    <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|urlencode }}&background=random&size=120"
-                         alt="Profile" class="profile-avatar mb-3">
-                </div>
+<div class="col-md-2 text-center">
+    {% if user.supplier.img %}
+        <img src="{{ user.supplier.img.url }}"
+             alt="Profile"
+             class="profile-avatar mb-3"
+             style="width:120px; height:120px; object-fit:cover; border-radius:50%;">
+    {% else %}
+        <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|urlencode }}&background=random&size=120"
+             alt="Profile"
+             class="profile-avatar mb-3"
+             style="width:120px; height:120px; border-radius:50%;">
+    {% endif %}
+</div>
                 <div class="col-md-7">
                     <h2>{{ user.get_full_name }}</h2>
                     <p class="lead mb-0">Професионален доставчик</p>

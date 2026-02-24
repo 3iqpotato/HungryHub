@@ -15,6 +15,7 @@ class SupplierProfileForm(forms.ModelForm):
         fields = ['name', 'img', 'phone_number', 'type']
 
         widgets = {
+            'img': forms.FileInput(attrs={'class': 'form-control'}),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),

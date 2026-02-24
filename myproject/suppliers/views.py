@@ -32,7 +32,6 @@ def complete_supplier_profile(request):
         form = SupplierForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
-        print("jda")
         if form.is_valid():
             supplier = form.save(commit=False)
             supplier.account = request.user
@@ -125,7 +124,7 @@ class EditSupplierProfileView(LoginRequiredMixin, View):
 
     def post(self, request):
         supplier = request.user.supplier
-        form = SupplierProfileForm(request.POST, instance=supplier)
+        form = SupplierProfileForm(request.POST, request.FILES, instance=supplier)
         if form.is_valid():
             form.save()
             return redirect('supplier_home_view')
