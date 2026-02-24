@@ -166,8 +166,8 @@
                 <tr>
                     <td>
                         <div class="item-info">
-                            {% if item.article.image %}
-                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="cart-item-img">
+                            {% if item.article.img %}
+                            <img src="{{ item.article.img.url }}" alt="{{ item.name }}" class="cart-item-img">
                             {% else %}
                             <img src="https://via.placeholder.com/80?text=Няма+снимка" class="cart-item-img">
                             {% endif %}
