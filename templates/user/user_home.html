@@ -69,8 +69,9 @@
     <div class="restaurants-container">
     {% for restaurant in restaurants %}
         <div class="restaurant-card">
-            {% if restaurant.image %}
-                <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="restaurant-image">
+            {% if restaurant.img %}
+               
+                <img src="{{ restaurant.img.url }}" alt="{{ restaurant.name }}" class="restaurant-image">
             {% else %}
                 <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No image" class="restaurant-image">
             {% endif %}

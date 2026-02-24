@@ -48,8 +48,8 @@
         <div class="menu-items">
             {% for item in articles %}
                 <div class="menu-item">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                    {% if item.img %}
+                        <img src="{{ item.img.url }}" alt="{{ item.name }}">
                     {% else %}
                         <img src="https://via.placeholder.com/250x150?text=No+Image">
                     {% endif %}
