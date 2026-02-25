@@ -84,14 +84,14 @@ class RestaurantHomeView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         orders = Order.objects.filter(restaurant=self.get_object(), order_date_time__date=today)
 
         # Изчисляваме оборота за деня чрез метода get_total_price() на всяка поръчка
-        daily_turnover = sum(order.get_total_price() for order in orders)
+        daily_turnover = sum(order.total_price - order.delivery_fee for order in orders)
 
         # Изчисляване на месечния оборот
         start_of_month = today.replace(day=1)
         monthly_orders = Order.objects.filter(restaurant=self.get_object(), order_date_time__gte=start_of_month)
 
         # Изчисляваме оборота за месеца
-        monthly_turnover = sum(order.get_total_price() for order in monthly_orders)
+        monthly_turnover = sum(order.total_price - order.delivery_fee for order in monthly_orders)
 
         # Добавяме оборотите в контекста
         context['daily_turnover'] = daily_turnover
