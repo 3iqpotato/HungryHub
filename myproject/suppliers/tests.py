@@ -58,7 +58,7 @@ class CompleteSupplierProfileViewTest(TestCase):
         form_data = {
             'name': 'Test Supplier',
             'phone_number': '1234567890',
-            'type': 'Test Type',
+            'type': 'car',
         }
         response = self.client.post(self.url, {**form_data,})
 
@@ -70,31 +70,63 @@ class CompleteSupplierProfileViewTest(TestCase):
         supplier = Supplier.objects.get(account=self.user)
         self.assertEqual(supplier.name, 'Test Supplier')
         self.assertEqual(supplier.phone_number, '1234567890')
-        self.assertEqual(supplier.type, 'Test Type')
+        self.assertEqual(supplier.type, 'car')
+
+    # def test_updates_existing_supplier(self):
+    #     # Първо създаваме доставчик
+    #     supplier = Supplier.objects.create(
+    #         account=self.user,
+    #         name='Old Name',
+    #         phone_number='123',
+    #         type='Old Type',
+    #     )
+    #
+    #     self.client.login(email='supplier@example.com', password='testpass123')
+    #     form_data = {
+    #         'name': 'New Name',
+    #         'phone_number': '987654321',
+    #         'type': 'New Type',
+    #     }
+    #     response = self.client.post(reverse('edit_supplier_profile'), form_data)
+    #     self.assertEqual(response.status_code, 302)
+    #
+    #     supplier.refresh_from_db()
+    #     self.assertEqual(supplier.name, 'New Name')
+    #     self.assertEqual(supplier.phone_number, '987654321')
+    #     self.assertEqual(supplier.type, 'New Type')
+
+
+class EditSupplierProfileViewTests(TestCase):
+    def setUp(self):
+        self.user = User._default_manager._create_user(
+            username='supplieruser',
+            email='supplier@example.com',
+            password='testpass123',
+            type='supplier'
+        )
+        self.url = reverse('edit_supplier_profile')
 
     def test_updates_existing_supplier(self):
-        # Първо създаваме доставчик
         supplier = Supplier.objects.create(
             account=self.user,
             name='Old Name',
             phone_number='123',
-            type='Old Type',
-            status='active'
+            type='motorcycle',
         )
 
         self.client.login(email='supplier@example.com', password='testpass123')
         form_data = {
             'name': 'New Name',
             'phone_number': '987654321',
-            'type': 'New Type',
+            'type': 'car',
         }
         response = self.client.post(self.url, form_data)
+        self.assertEqual(response.status_code, 302)
 
         supplier.refresh_from_db()
         self.assertEqual(supplier.name, 'New Name')
         self.assertEqual(supplier.phone_number, '987654321')
-        self.assertEqual(supplier.type, 'New Type')
-
+        self.assertEqual(supplier.type, 'car')
 
 class SupplierHomeViewTest(TestCase):
     def setUp(self):
@@ -108,8 +140,7 @@ class SupplierHomeViewTest(TestCase):
             account=self.user,
             name='Test Supplier',
             phone_number='1234567890',
-            type='Test Type',
-            status='active'
+            type='car',
         )
         self.url = reverse('supplier_home_view')
 
@@ -142,8 +173,7 @@ class EditSupplierProfileViewTest(TestCase):
             account=self.user,
             name='Test Supplier',
             phone_number='1234567890',
-            type='Test Type',
-            status='active'
+            type='car',
         )
         self.url = reverse('edit_supplier_profile')
 
@@ -152,7 +182,7 @@ class EditSupplierProfileViewTest(TestCase):
         form_data = {
             'name': 'Updated Name',
             'phone_number': '987654321',
-            'type': 'Updated Type',
+            'type': 'motorcycle',
         }
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 302)
@@ -160,7 +190,7 @@ class EditSupplierProfileViewTest(TestCase):
         self.supplier.refresh_from_db()
         self.assertEqual(self.supplier.name, 'Updated Name')
         self.assertEqual(self.supplier.phone_number, '987654321')
-        self.assertEqual(self.supplier.type, 'Updated Type')
+        self.assertEqual(self.supplier.type, 'motorcycle')
 
 
 class SupplierOrderViewsTest(TestCase):
@@ -175,8 +205,7 @@ class SupplierOrderViewsTest(TestCase):
             account=self.user,
             name='Test Supplier',
             phone_number='1234567890',
-            type='Test Type',
-            status='active'
+            type='car',
         )
 
     def test_available_orders_view(self):
