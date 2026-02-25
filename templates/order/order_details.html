@@ -119,11 +119,11 @@
                     <tfoot>
                         <tr>
                             <td colspan="3" class="text-end"><strong>Delivery Fee:</strong></td>
-                            <td>{{ order.restaurant.delivery_fee|default:"0.00" }} лв.</td>
+                            <td>{{ order.delivery_fee|default:"0.00" }} лв.</td>
                         </tr>
                         <tr>
                             <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                            <td>{{ order.get_total_price }} лв.</td>
+                            <td>{{ order.total_price }} лв.</td>
                         </tr>
                     </tfoot>
                 </table>

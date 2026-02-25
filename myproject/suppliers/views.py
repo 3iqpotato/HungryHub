@@ -63,12 +63,12 @@ class SupplierHomeView(LoginRequiredMixin, View):
             delivery_time__date=timezone.now().date()
         )
         delivered_today_count = delivered_today.count()
-        bonus = supplier.calculate_bonus()
-        daily_earnings = delivered_today_count * 3 + bonus
-
+        # bonus = supplier.calculate_bonus()
+        daily_earnings = supplier.get_daily_earnings()
+        montly_earnings = supplier.get_monthly_earnings()
         # Обороти
-        daily_turnover = supplier.get_daily_turnover()
-        monthly_turnover = supplier.get_monthly_turnover()
+        # daily_turnover = supplier.get_daily_turnover()
+        # monthly_turnover = supplier.get_monthly_turnover()
 
         active_orders = Order.objects.filter(supplier=supplier, status='on_delivery').count()
         delivered_orders = Order.objects.filter(supplier=supplier, status='delivered').count()
@@ -79,9 +79,7 @@ class SupplierHomeView(LoginRequiredMixin, View):
             'delivered_orders': delivered_orders,
             'user': request.user,
             'daily_earnings': daily_earnings,
-            'daily_turnover': daily_turnover,
-            'monthly_turnover': monthly_turnover,
-            'bonus': bonus,
+            'month_earnings' : montly_earnings,
             'delivered_today': delivered_today,  # Подаваме само доставените поръчки за днес
         }
         return render(request, self.template_name, context)

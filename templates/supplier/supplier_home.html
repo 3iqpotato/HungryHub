@@ -133,18 +133,22 @@
                         <h6 class="text-muted">Текущо заплащане за днес</h6>
                         <p>{{ daily_earnings|floatformat:2 }} лв.</p>
                     </div>
-                    <button class="btn btn-outline-dark mb-3" onclick="toggleTurnover()">Обороти</button>
-
-                    <div id="turnover-section" style="display: none;">
-                        <div class="mb-2">
-                            <h6 class="text-muted">Дневен оборот</h6>
-                            <p>{{ daily_turnover|floatformat:2 }} лв.</p>
-                        </div>
-                        <div class="mb-2">
-                            <h6 class="text-muted">Месечен оборот</h6>
-                            <p>{{ monthly_turnover|floatformat:2 }} лв.</p>
-                        </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted">Текущо заплащане за месеца</h6>
+                        <p>{{ daily_earnings|floatformat:2 }} лв.</p>
                     </div>
+{#                    <button class="btn btn-outline-dark mb-3" onclick="toggleTurnover()">Обороти</button>#}
+{##}
+{#                    <div id="turnover-section" style="display: none;">#}
+{#                        <div class="mb-2">#}
+{#                            <h6 class="text-muted">Дневен оборот</h6>#}
+{#                            <p>{{ daily_turnover|floatformat:2 }} лв.</p>#}
+{#                        </div>#}
+{#                        <div class="mb-2">#}
+{#                            <h6 class="text-muted">Месечен оборот</h6>#}
+{#                            <p>{{ monthly_turnover|floatformat:2 }} лв.</p>#}
+{#                        </div>#}
+{#                    </div>#}
 
                 </div>
             </div>

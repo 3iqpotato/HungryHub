@@ -192,9 +192,20 @@
             </tbody>
         </table>
 
-        <div class="cart-summary">
-            Обща сума: {{ cart.get_total_price|floatformat:2 }} лв.
+<div class="cart-summary">
+    <div>Сума на продуктите: {{ cart.get_subtotal|floatformat:2 }} лв.</div>
+
+    {% if cart.get_delivery_fee > 0 %}
+        <div style="color:#e67e22;">
+            Такса за доставка (поръчка под 30 лв): {{ cart.get_delivery_fee|floatformat:2 }} лв.
         </div>
+    {% endif %}
+
+    <hr>
+    <div style="font-size:1.4rem;">
+        Общо: {{ cart.get_total_price|floatformat:2 }} лв.
+    </div>
+</div>
 
         <div class="cart-actions">
             <a href="{% url 'user_home' pk=user.userprofile.pk %}" class="continue-shopping">Продължи пазаруването</a>

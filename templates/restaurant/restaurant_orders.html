@@ -95,7 +95,7 @@
                         <div class="text-end">
                             <span class="badge badge-pending">В обработка</span>
                             <p class="mt-2 mb-0">
-                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                                <strong>{{ order.total_price|floatformat:2 }} лв.</strong>
                             </p>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                         <div class="text-end">
                             <span class="badge badge-ready">Готова за вземане</span>
                             <p class="mt-2 mb-0">
-                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                                <strong>{{ order.total_price|floatformat:2 }} лв.</strong>
                             </p>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         <div class="text-end">
                             <span class="badge badge-delivered">Доставена</span>
                             <p class="mt-2 mb-0">
-                                <strong>{{ order.get_total_price|floatformat:2 }} лв.</strong>
+                                <strong>{{ order.total_price|floatformat:2 }} лв.</strong>
                             </p>
                         </div>
                     </div>

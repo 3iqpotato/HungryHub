@@ -1,3 +1,4 @@
+from decimal import Decimal
 from numbers import Number
 
 from django.db import models
@@ -9,10 +10,19 @@ from myproject.articles.models import Article
 class Cart(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)  # Нова връзка
 
-    def get_total_price(self):
+    def get_subtotal(self):
         items = self.items.all()
-        total = sum(item.get_total_price() for item in items)
-        return total
+        return sum(item.get_total_price() for item in items)
+
+    def get_delivery_fee(self):
+        subtotal = self.get_subtotal()
+        if subtotal > 0 and subtotal < Decimal("30.00"):
+            return Decimal("3.00")
+        return Decimal("0.00")
+
+    def get_total_price(self):
+        return self.get_subtotal() + self.get_delivery_fee()
+
 
     def __str__(self):
         return f"Cart of {self.user.username}"
@@ -43,11 +53,28 @@ class Order(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True)
+    delivery_fee = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal("0.00"))
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
 
-    def get_total_price(self):
-        items = self.order_items.all()
-        total = sum(item.get_total_price() for item in items)
-        return total + (self.restaurant.delivery_fee if self.restaurant and hasattr(self.restaurant, 'delivery_fee') else 0)
+
+    # def get_total_price(self):
+    #     items = self.order_items.all()
+    #     total = sum(item.get_total_price() for item in items)
+    #     return total + (self.restaurant.delivery_fee if self.restaurant and hasattr(self.restaurant, 'delivery_fee') else 0)
+
+    def get_subtotal(self):
+        return sum((item.get_total_price() for item in self.order_items.all()), Decimal("0.00"))
+
+    # def calculate_delivery_fee(self):
+    #     # Ако имаш нулеви поръчки – не начислявай
+    #     subtotal = self.get_subtotal()
+    #     if subtotal > 0 and subtotal < Decimal("30.00"):
+    #         return Decimal("3.00")
+    #     return Decimal("0.00")
+
+    # def get_total_price(self):
+    #     return self.get_subtotal() + (self.delivery_fee or Decimal("0.00"))
+
 
     @property
     def cart_items(self):

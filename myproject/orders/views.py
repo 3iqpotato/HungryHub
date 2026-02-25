@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pprint import pprint
 
 from django.contrib.auth.decorators import login_required
@@ -85,75 +86,70 @@ from .models import Order, OrderItem, CartItem
 
 class CreateOrderView(View):
     def post(self, request):
-        # Проверка дали потребителят е логнат и има UserProfile
         if not hasattr(request.user, 'userprofile'):
             return HttpResponseBadRequest("Не сте влезли в системата")
 
         user_profile = request.user.userprofile
 
-        # Проверка за количка
         if not user_profile.cart.items.exists():
             return HttpResponseBadRequest("Количката ви е празна")
 
-        # Взимане на всички артикули от количката
         cart_items = user_profile.cart.items.select_related(
             'article__menu__restaurant'
         ).all()
 
-        # Проверка за ресторанти
         restaurant = None
         for item in cart_items:
             if not restaurant:
                 restaurant = item.article.menu.restaurant
             elif item.article.menu.restaurant != restaurant:
-                return HttpResponseBadRequest(
-                    "Не можете да поръчвате от множество ресторанти наведнъж"
-                )
+                return HttpResponseBadRequest("Не можете да поръчвате от множество ресторанти наведнъж")
 
-        # Създаване на поръчка в transaction за сигурност
         try:
             with transaction.atomic():
-                # Създаване на поръчка
                 order = Order.objects.create(
                     user=user_profile,
                     restaurant=restaurant,
                     status='pending',
                     address_for_delivery=user_profile.address,
                     order_date_time=timezone.now(),
-                    delivery_time=timezone.now() + timezone.timedelta(minutes=45)  # Примерно време за доставка
+                    delivery_time=timezone.now() + timezone.timedelta(minutes=45)
                 )
 
-                # Създаване на OrderItems от CartItems
+                # 1) правим OrderItems + смятаме subtotal от КОЛИЧКАТА (най-сигурно)
                 order_items = []
+                subtotal = Decimal("0.00")
+
                 for cart_item in cart_items:
+                    price = Decimal(str(cart_item.article.price))
+                    qty = Decimal(str(cart_item.quantity))
+                    subtotal += price * qty
+
                     order_items.append(OrderItem(
                         order=order,
                         article=cart_item.article,
-                        quantity=cart_item.quantity, # Запазване на цената към момента на поръчката
+                        quantity=cart_item.quantity,
+                        # ако имаш поле price_at_purchase -> запиши price тук
                     ))
 
                 OrderItem.objects.bulk_create(order_items)
 
-                # Изтриване на артикулите от количката
+                # 2) смятаме таксата 3 лв при subtotal < 30
+                delivery_fee = Decimal("3.00") if (subtotal > 0 and subtotal < Decimal("30.00")) else Decimal("0.00")
+
+                # 3) записваме в order (заключваме стойностите)
+                order.delivery_fee = delivery_fee
+                order.total_price = subtotal + delivery_fee
+                order.save(update_fields=["delivery_fee", "total_price"])
+
+                # 4) чистим количката
                 cart_items.delete()
 
-                # Опционално: изчисляване на общата сума и запазването й в поръчката
-                order.total_price = sum(
-                    item.article.price * item.quantity
-                    for item in order.order_items.all()
-                ) + (restaurant.delivery_fee if restaurant.delivery_fee else 0)
-                order.save()
-
         except Exception as e:
-            # Логване на грешката
             print(f"Грешка при създаване на поръчка: {str(e)}")
             return HttpResponseBadRequest("Възникна грешка при обработката на поръчката")
 
-        # Пренасочване към детайлите на поръчката
-        return HttpResponseRedirect(
-            reverse('order_detail', args=[order.id]) + "?success=1"
-        )
-
+        return HttpResponseRedirect(reverse('order_detail', args=[order.id]) + "?success=1")
 
 @login_required
 def order_detail(request, order_id):
