@@ -4,8 +4,8 @@ from .models import Supplier
 
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('account', 'name', 'phone_number', 'status', 'type')
-    list_filter = ('status', 'type')
+    list_display = ('account', 'name', 'phone_number', 'type')
+    list_filter = ('type',)
     search_fields = ('name', 'phone_number')
     raw_id_fields = ('account',)
 

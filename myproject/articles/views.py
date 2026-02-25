@@ -11,7 +11,7 @@ from .models import Article, Menu
 
 class ArticleCreateView(CreateView):
     model = Article
-    fields = ['name', 'img', 'type', 'ingredients', 'price', 'weight', 'category']
+    fields = ['name', 'img', 'type', 'ingredients', 'price', 'weight']
     template_name = 'articles/article_create.html'
 
     def get_context_data(self, **kwargs):
@@ -37,7 +37,7 @@ class ArticleCreateView(CreateView):
 
 class ArticleUpdateView(UpdateView):
     model = Article
-    fields = ['name', 'img', 'type', 'ingredients', 'price', 'weight', 'category']
+    fields = ['name', 'img', 'type', 'ingredients', 'price', 'weight',]
     template_name = 'articles/article_edit.html'
 
     def get_success_url(self):

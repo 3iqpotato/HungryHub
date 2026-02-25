@@ -21,7 +21,7 @@ class Article(models.Model):
     price = models.DecimalField(max_digits=7, decimal_places=2)
     rating = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
-    category = models.CharField(max_length=50, null=True, blank=True)
+    # category = models.CharField(max_length=50, null=True, blank=True)
     menu = models.ForeignKey(  # Променено от ManyToManyField
         Menu,
         on_delete=models.CASCADE,
