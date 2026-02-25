@@ -108,6 +108,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "hungryhub",
+        "USER": "django_user",
+        "PASSWORD": "django_pass",
+        "HOST": "127.0.0.1",   # или "localhost"
+        "PORT": "5433",
+
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
