@@ -72,10 +72,22 @@
                                 <a href="{% url 'supplier_home_view' %}" class="btn btn-success btn-action">
                     Към моя профил
                 </a>
-                {% else  %}
+                {% elif user.userprofile %}
                                 <a href="{% url 'user_home'  pk=user.userprofile.pk %}" class="btn btn-success btn-action">
                     Go check Restaurants
                 </a>
+                {% elif user.type == "supplier" and not user.supplier %}
+                                <a href="{% url 'complete_supplier_profile'  %}" class="btn btn-success btn-action">
+                    довърши акаунта
+                </a>
+                {% elif user.type == "restaurant" and not user.restaurant %}
+                                <a href="{% url 'complete_restaurant_profile'  %}" class="btn btn-success btn-action">
+                    довърши акаунта
+                </a>
+{#                {% elif user.type == "user" %}#}
+{#                                <a href="{% url 'complete_restaurant_profile'  %}" class="btn btn-success btn-action">#}
+{#                    довърши акаунта#}
+{#                </a>#}
                 {% endif %}
             </div>
             {% endif %}

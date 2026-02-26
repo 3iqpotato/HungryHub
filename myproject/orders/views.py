@@ -82,7 +82,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db import transaction
 from .models import Order, OrderItem, CartItem
-
+from django.contrib import messages
 
 class CreateOrderView(View):
     def post(self, request):
@@ -90,6 +90,11 @@ class CreateOrderView(View):
             return HttpResponseBadRequest("Не сте влезли в системата")
 
         user_profile = request.user.userprofile
+
+
+        if not user_profile.is_complete():
+            messages.warning(request, "Моля, попълнете адрес и телефон преди да направите поръчка.")
+            return redirect('complete_user_profile')
 
         if not user_profile.cart.items.exists():
             return HttpResponseBadRequest("Количката ви е празна")

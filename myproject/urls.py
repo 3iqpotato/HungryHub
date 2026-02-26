@@ -29,6 +29,9 @@ urlpatterns = [
     path('restaurant/', include('myproject.restaurants.urls')),
     path('articles/', include('myproject.articles.urls')),
     path('orders/', include('myproject.orders.urls')),
+
+    # API URLS
+    path("api/", include("myproject.api_urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
