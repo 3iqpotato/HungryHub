@@ -187,6 +187,7 @@ def mark_as_delivered(request, order_id):
 
     # Промяна на статуса
     order.status = 'delivered'
+    order.delivered_at = timezone.now()
     order.save()
 
     return redirect('supplier_active_orders')
