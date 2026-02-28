@@ -25,7 +25,7 @@ class Cart(models.Model):
 
 
     def __str__(self):
-        return f"Cart of {self.user.username}"
+        return f"Cart of {self.user.name}"
 
 class CartItem(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
@@ -55,7 +55,7 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True)
     delivery_fee = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal("0.00"))
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-
+    delivered_at = models.DateTimeField(null=True, blank=True)
 
     # def get_total_price(self):
     #     items = self.order_items.all()
@@ -76,9 +76,9 @@ class Order(models.Model):
     #     return self.get_subtotal() + (self.delivery_fee or Decimal("0.00"))
 
 
-    @property
-    def cart_items(self):
-        return CartItem.objects.filter(order=self)
+    # @property
+    # def cart_items(self):
+    #     return CartItem.objects.filter(order=self)  // TODO ako problem s poruchki ot tova
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
