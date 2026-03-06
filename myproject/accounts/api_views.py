@@ -63,7 +63,6 @@ def register_api(request):
       "username": "..."   (по желание; ако липсва -> ще стане email)
     }
     """
-    print(request.data)
     email = (request.data.get("email") or "").strip().lower() # може да има проблем с lower TODO
     password = request.data.get("password") or ""
     acc_type = (request.data.get("type") or "").strip()

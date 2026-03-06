@@ -35,8 +35,10 @@ def complete_user_profile_api(request):
     - GET: връща текущия профил
     - POST: попълва/редактира профила (partial update)
     """
+    print(request.data)
     bad = _ensure_user_type(request)
     if bad:
+
         return bad
 
     profile, _ = UserProfile.objects.get_or_create(account=request.user)
@@ -48,13 +50,16 @@ def complete_user_profile_api(request):
     ser.is_valid(raise_exception=True)
     ser.save()
 
+    print(profile.is_complete())
     if profile.is_complete():
+        print("dojaohd")
         return Response({
             "status": "ok",
-            "profile": UserProfileSerializer(profile).data,
-            "next": "user_home",
-            "profile_id": profile.id,
+            "user": UserProfileSerializer(profile).data,
+            "next": "user_home",  # или друг път, ако е необходимо
+            "profileid": profile.id,
         })
+
 
     return Response({
         "status": "ok",

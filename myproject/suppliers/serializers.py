@@ -3,6 +3,8 @@ from myproject.suppliers.models import Supplier
 
 
 class SupplierSerializer(serializers.ModelSerializer):
+    last_reset = serializers.DateTimeField()
+
     class Meta:
         model = Supplier
         fields = ("id", "name", "img", "phone_number", "type", "daily_earnings", "last_reset")

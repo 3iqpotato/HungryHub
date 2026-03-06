@@ -32,6 +32,7 @@ def complete_supplier_profile_api(request):
     - GET: връща профила ако има
     - POST: create/update профил
     """
+    print(request.data)
     bad = _ensure_supplier_type(request)
     if bad:
         return bad
