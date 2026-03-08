@@ -5,12 +5,13 @@ from myproject.orders.models import Cart, CartItem, Order, OrderItem
 class CartItemSerializer(serializers.ModelSerializer):
     article_id = serializers.IntegerField(source="article.id", read_only=True)
     article_name = serializers.CharField(source="article.name", read_only=True)
+    article_img = serializers.CharField(source="article.img", read_only=True)
     price = serializers.DecimalField(source="article.price", max_digits=10, decimal_places=2, read_only=True)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = CartItem
-        fields = ("id", "article_id", "article_name", "price", "quantity", "total_price")
+        fields = ("id", "article_id", "article_img", "article_name", "price", "quantity", "total_price")
 
     def get_total_price(self, obj):
         return obj.get_total_price()
@@ -54,6 +55,8 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(source="order_items", many=True, read_only=True)
     restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
     supplier_name = serializers.CharField(source="supplier.name", read_only=True)
+    restaurant_address = serializers.CharField(source="restaurant.address", read_only=True)
+    restaurant_phone = serializers.CharField(source="restaurant.phone_number", read_only=True)
 
     class Meta:
         model = Order
@@ -67,6 +70,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "total_price",
             "restaurant",
             "restaurant_name",
+            "restaurant_address",
+            "restaurant_phone",
             "supplier",
             "supplier_name",
             "items",
