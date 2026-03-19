@@ -27,7 +27,7 @@ class Supplier(models.Model):
     )
 
     daily_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    last_reset = models.DateTimeField(default=timezone.now())
+    last_reset = models.DateTimeField(default=timezone.now)
 
     def get_daily_earnings(self, date=None):
         from myproject.orders.models import Order
