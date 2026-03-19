@@ -36,7 +36,7 @@ python manage.py runserver
 ```
 След това отворете браузър на http://127.0.0.1:8000/
 
-📖 За подробни инструкции вижте docs/instructions.md
+📖 За подробни инструкции вижте [docs/instructions.md](docs/instructions.md)
 ---
 📁 Структура на проекта
 ```
