@@ -162,7 +162,7 @@ class UserProfileViewTest(TestCase):
             type='user'
         )
         self.profile = UserProfile.objects.get(account=self.user)
-        self.url = reverse('user_profile', kwargs={'pk': self.user.pk})
+        self.url = reverse('user_profile', kwargs={'pk': self.profile.pk})
 
     def test_view_renders_correctly(self):
         self.client.login(email='test@example.com', password='testpass123')
@@ -180,7 +180,7 @@ class EditProfileViewTest(TestCase):
             type='user'
         )
         self.profile = UserProfile.objects.get(account=self.user)
-        self.url = reverse('user_profile_edit', kwargs={'pk': self.user.pk})
+        self.url = reverse('user_profile_edit', kwargs={'pk': self.profile.pk})
 
     def test_updates_profile(self):
         self.client.login(email='test@example.com', password='testpass123')
