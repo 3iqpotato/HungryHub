@@ -90,6 +90,12 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     template_name = 'user/user_profile_edit.html'
     fields = ['name', 'img', 'phone_number', 'address'] # Пренасочва след успешно редактиране
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        print(f"Storage class: {instance.img.storage.__class__.__name__}")
+        print(f"Storage module: {instance.img.storage.__class__.__module__}")
+        return super().form_valid(form)
+
     def get_object(self, queryset=None):
         # Връща профила на текущия потребител
         return self.request.user.userprofile
@@ -113,6 +119,8 @@ class UserProfileView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         # Връща профила на текущия потребител
         profile = self.request.user.userprofile
+        print(f"IMG field: {profile.img}")
+        print(f"IMG URL: {profile.img.url if profile.img else 'No image'}")
         return profile
 
     def dispatch(self, request, *args, **kwargs):
