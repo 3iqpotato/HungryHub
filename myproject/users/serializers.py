@@ -17,6 +17,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_profile_completed(self, obj):
         return obj.is_complete()
 
+    def validate_img(self, value):
+        max_size = 5 * 1024 * 1024  # 5 MB
+        if value.size > max_size:
+            raise serializers.ValidationError("Снимката не може да е по-голяма от 5 MB.")
+
+        allowed_types = ['image/jpeg', 'image/png', 'image/webp']
+        if hasattr(value, 'content_type') and value.content_type not in allowed_types:
+            raise serializers.ValidationError("Позволени формати: JPEG, PNG, WebP.")
+
+        return value
+
 # # TODO ima da se opraci i da se ozpolzva istinskiq
 # class RestaurantMiniSerializer(serializers.ModelSerializer):
 #     class Meta:
