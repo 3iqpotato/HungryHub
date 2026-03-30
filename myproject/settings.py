@@ -49,7 +49,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'myproject.urls'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 TEMPLATES = [
     {
@@ -167,6 +166,14 @@ if AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY:
     AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
     MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/media/'
 else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        }
+    }
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -180,13 +187,9 @@ LOGGING = {
         },
     },
     'loggers': {
-        'storages': {
+        'django': {
             'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-        'azure': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
         },
     },
 }
