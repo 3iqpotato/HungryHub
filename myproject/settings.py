@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-default-key")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
-
+ALLOWED_HOSTS += ["169.254.130.2", "169.254.130.4", "169.254.129.2", "169.254.129.5"]
 MyApps = [
     'myproject.accounts',
     'myproject.users',

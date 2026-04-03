@@ -5,7 +5,7 @@ from myproject.orders.models import Cart, CartItem, Order, OrderItem
 class CartItemSerializer(serializers.ModelSerializer):
     article_id = serializers.IntegerField(source="article.id", read_only=True)
     article_name = serializers.CharField(source="article.name", read_only=True)
-    article_img = serializers.CharField(source="article.img", read_only=True)
+    article_img = serializers.ImageField(source="article.img", read_only=True)
     price = serializers.DecimalField(source="article.price", max_digits=10, decimal_places=2, read_only=True)
     total_price = serializers.SerializerMethodField()
 
